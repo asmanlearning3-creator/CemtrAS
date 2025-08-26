@@ -35,7 +35,7 @@ export const ChatHistoryProvider: React.FC<ChatHistoryProviderProps> = ({ childr
   const [chatHistoryState, setChatHistoryState] = useState<ChatHistoryState>({
     histories: [],
     currentChatId: null,
-    maxHistories: 2
+    maxHistories: 1
   });
 
   // Load chat histories when user changes
