@@ -1,7 +1,7 @@
 import type { ChatHistory, Message, UserRole } from '../types';
 
 export class ChatHistoryService {
-  private static readonly MAX_HISTORIES = 10;
+  private static readonly MAX_HISTORIES = 2;
 
   // Save chat history for authenticated user
   static saveChatHistory(userId: string, chatData: {
