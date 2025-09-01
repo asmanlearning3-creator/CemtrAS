@@ -1,7 +1,6 @@
 import React from 'react';
 import { Factory, BarChart3, TrendingUp, ShoppingCart, Wrench, Settings, Bot } from 'lucide-react';
 import type { UserRole } from '../types';
-import { useAuth } from '../contexts/AuthContext';
 
 interface RoleSelectorProps {
   selectedRole: UserRole | 'General AI';
@@ -14,7 +13,6 @@ const roles: {
   icon: React.ReactNode; 
   color: string; 
   description: string;
-  requiresAuth?: boolean;
 }[] = [
   { 
     value: 'Operations', 
@@ -63,19 +61,14 @@ const roles: {
     label: 'General AI Assistant', 
     icon: <Bot size={18} />, 
     color: 'border-purple-500 bg-purple-50 text-purple-700',
-    description: 'General purpose AI for any questions',
-    requiresAuth: true
+    description: 'General purpose AI for any questions'
   },
 ];
 
 export const RoleSelector: React.FC<RoleSelectorProps> = ({ selectedRole, onRoleChange }) => {
-  const { isAuthenticated } = useAuth();
-
   return (
     <div className="space-y-2">
-      {roles
-        .filter(role => !role.requiresAuth || isAuthenticated)
-        .map((role) => (
+      {roles.map((role) => (
           <button
             key={role.value}
             onClick={() => onRoleChange(role.value)}

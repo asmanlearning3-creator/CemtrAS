@@ -17,18 +17,9 @@ export interface ChatState {
 
 export interface User {
   id: string;
-  fullName: string;
-  email: string;
-  mobile: string;
+  name: string;
   isAuthenticated: boolean;
-  registrationDate: Date;
-}
-
-export interface OTPResponse {
-  success: boolean;
-  message: string;
-  otpSent?: boolean;
-  otp?: string; // For demo purposes
+  entryDate: Date;
 }
 
 export interface AuthState {
@@ -37,7 +28,6 @@ export interface AuthState {
   isLoading: boolean;
   error: string | null;
 }
-
 export interface ChatHistory {
   id: string;
   title: string;
@@ -61,16 +51,4 @@ export interface FileUpload {
   content: string | ArrayBuffer;
   url?: string;
   uploadDate: Date;
-}
-
-export interface RegisterData {
-  fullName: string;
-  email: string;
-  mobile: string;
-  password: string;
-}
-
-export interface LoginData {
-  emailOrMobile: string;
-  password: string;
 }

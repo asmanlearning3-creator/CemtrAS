@@ -6,8 +6,7 @@ import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
 import { LoadingMessage } from './components/LoadingMessage';
 import { ErrorMessage } from './components/ErrorMessage';
-import { LoginScreen } from './components/LoginScreen';
-import { AuthScreen } from './components/AuthScreen';
+import { NameEntryScreen } from './components/NameEntryScreen';
 import { useAuth } from './contexts/AuthContext';
 import { useChatHistory } from './contexts/ChatHistoryContext';
 import { useTheme } from './contexts/ThemeContext';
@@ -18,8 +17,7 @@ function App() {
   const { user, isAuthenticated, logout } = useAuth();
   const { saveChatHistory, loadChatHistory, setCurrentChatId } = useChatHistory();
   const { isDarkMode } = useTheme();
-  const [showLogin, setShowLogin] = useState(true);
-  const [showAuth, setShowAuth] = useState(false);
+  const [showNameEntry, setShowNameEntry] = useState(!isAuthenticated);
   const [chatState, setChatState] = useState<ChatState>({
     messages: [],
     isLoading: false,
@@ -41,23 +39,12 @@ function App() {
   // Check authentication status on mount
   useEffect(() => {
     if (isAuthenticated) {
-      setShowLogin(false);
-      setShowAuth(false);
+      setShowNameEntry(false);
     }
   }, [isAuthenticated]);
 
-  const handleLogin = () => {
-    setShowLogin(false);
-    setShowAuth(true);
-  };
-
-  const handleGuestAccess = () => {
-    setShowLogin(false);
-    setShowAuth(false);
-  };
-
-  const handleAuthComplete = () => {
-    setShowAuth(false);
+  const handleNameEntryComplete = () => {
+    setShowNameEntry(false);
   };
 
   const handleSendMessage = async (content: string) => {
@@ -87,7 +74,7 @@ function App() {
       const aiResponse = await generateResponse(
         content, 
         chatState.selectedRole, 
-        isAuthenticated,
+        true, // Always authenticated now
         chatState.uploadedFiles
       );
       
@@ -111,7 +98,7 @@ function App() {
 
   // Auto-save chat when messages change (for authenticated users)
   useEffect(() => {
-    if (isAuthenticated && chatState.messages.length >= 2) {
+    if (chatState.messages.length >= 2) {
       const hasUserMessage = chatState.messages.some(m => m.role === 'user');
       const hasAIResponse = chatState.messages.some(m => m.role === 'assistant');
       
@@ -122,7 +109,7 @@ function App() {
         });
       }
     }
-  }, [chatState.messages, isAuthenticated, chatState.selectedRole, saveChatHistory]);
+  }, [chatState.messages, chatState.selectedRole, saveChatHistory]);
 
   const handleRoleChange = (role: UserRole | 'General AI') => {
     setChatState(prev => ({ ...prev, selectedRole: role }));
@@ -166,12 +153,8 @@ function App() {
   };
   const clearError = () => setError(null);
 
-  if (showLogin && !isAuthenticated) {
-    return <LoginScreen onLogin={handleLogin} onGuestAccess={handleGuestAccess} />;
-  }
-
-  if (showAuth) {
-    return <AuthScreen onComplete={handleAuthComplete} />;
+  if (showNameEntry) {
+    return <NameEntryScreen onComplete={handleNameEntryComplete} />;
   }
 
   return (
@@ -217,7 +200,7 @@ function App() {
                   <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Welcome to CemtrAS AI</h3>
                   <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto text-lg leading-relaxed">
                     AI-powered Cement Plant Operations, Safety & Efficiency Expert — your trusted partner in building and optimizing world-class cement plants.
-                    {isAuthenticated && <span className="text-green-600 dark:text-green-400 font-semibold"><br/>✅ You have access to General AI mode and chat history!</span>}
+                    <span className="text-green-600 dark:text-green-400 font-semibold"><br/>✅ You have access to all premium features!</span>
                   </p>
                   <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-4xl mx-auto border border-gray-200 dark:border-gray-700 shadow-lg">
                     <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-6">🔧 Available Expertise Areas:</h4>
@@ -250,22 +233,13 @@ function App() {
                           <p className="text-gray-700 dark:text-gray-300 font-semibold">Engineering & Design</p>
                         </div>
                       </div>
-                      {isAuthenticated && (
-                        <div className="text-left space-y-3 sm:col-span-2">
-                          <div className="flex items-center gap-3">
-                            <div className="w-3 h-3 bg-purple-500 rounded-full flex-shrink-0"></div>
-                            <p className="text-gray-700 dark:text-gray-300 font-semibold">🤖 General AI Assistant</p>
-                          </div>
+                      <div className="text-left space-y-3 sm:col-span-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-3 h-3 bg-purple-500 rounded-full flex-shrink-0"></div>
+                          <p className="text-gray-700 dark:text-gray-300 font-semibold">🤖 General AI Assistant</p>
                         </div>
-                      )}
-                    </div>
-                    {!isAuthenticated && (
-                      <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
-                        <p className="text-yellow-800 dark:text-yellow-200 font-semibold text-sm">
-                          🔓 Login to unlock General AI mode, file uploads, and chat history!
-                        </p>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -286,9 +260,9 @@ function App() {
               onSend={handleSendMessage}
               isLoading={chatState.isLoading || !!error}
               placeholder={`Ask about cement plant operations (${chatState.selectedRole} expertise)...`}
-              onFileUpload={isAuthenticated ? handleFileUpload : undefined}
+              onFileUpload={handleFileUpload}
               uploadedFiles={chatState.uploadedFiles}
-              onRemoveFile={isAuthenticated ? handleRemoveFile : undefined}
+              onRemoveFile={handleRemoveFile}
             />
           </div>
         </div>

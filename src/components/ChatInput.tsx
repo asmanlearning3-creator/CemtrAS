@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
-import { Send, Mic, Paperclip, X, FileText, Image } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import type { FileUpload } from '../types';
 interface ChatInputProps {
   onSend: (message: string) => void;
-  onSendWithFiles: (message: string, files: FileUpload[]) => void;
   isLoading: boolean;
   placeholder?: string;
+  onFileUpload?: (files: FileUpload[]) => void;
+  uploadedFiles?: FileUpload[];
+  onRemoveFile?: (fileId: string) => void;
 }
 export const ChatInput: React.FC<ChatInputProps> = ({ 
   onSend, 
-  onSendWithFiles, 
   isLoading, 
-  placeholder 
-}) => {
+  placeholder,
+  onFileUpload,
+  uploadedFiles = [],
+  onRemoveFile
   const { isAuthenticated } = useAuth();
-  const [input, setInput] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<FileUpload[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,7 +34,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   const handleFiles = async (files: File[]) => {
-    if (!isAuthenticated) return;
+    if (!onFileUpload) return;
 
     const validFiles = files.filter(file => {
       const isValidType = file.type.startsWith('image/') || file.type === 'application/pdf';
@@ -62,14 +63,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       })
     );
 
-    setUploadedFiles(prev => [...prev, ...fileUploads]);
+    onFileUpload(fileUploads);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    if (isAuthenticated) {
-      setIsDragOver(true);
-    }
+    setIsDragOver(true);
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
@@ -80,20 +79,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    if (isAuthenticated) {
-      const files = Array.from(e.dataTransfer.files);
-      handleFiles(files);
-    }
-  };
-
-  const onRemoveFile = (fileId: string) => {
-    setUploadedFiles(prev => prev.filter(file => file.id !== fileId));
+    const files = Array.from(e.dataTransfer.files);
+    handleFiles(files);
   };
 
   return (
     <div className="space-y-3">
       {/* Uploaded Files Display */}
-      {isAuthenticated && uploadedFiles.length > 0 && (
+      {uploadedFiles.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {uploadedFiles.map((file) => (
             <div
@@ -104,7 +97,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 {file.name}
               </span>
               <button
-                onClick={() => onRemoveFile(file.id)}
+                onClick={() => onRemoveFile?.(file.id)}
                 className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-200"
               >
                 <X size={14} />
@@ -135,25 +128,21 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           />
           
           {/* File Upload Button (Authenticated Users Only) */}
-          {isAuthenticated && (
-            <>
-              <input
-                type="file"
-                id="file-upload"
-                multiple
-                accept="image/*,.pdf"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-              <label
-                htmlFor="file-upload"
-                className="absolute right-16 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
-                title="Upload files (PDF, Images)"
-              >
-                <Paperclip size={16} />
-              </label>
-            </>
-          )}
+          <input
+            type="file"
+            id="file-upload"
+            multiple
+            accept="image/*,.pdf"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <label
+            htmlFor="file-upload"
+            className="absolute right-16 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
+            title="Upload files (PDF, Images)"
+          >
+            <Paperclip size={16} />
+          </label>
           
           <button
             type="button"
@@ -178,7 +167,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       </form>
 
       {/* Drag & Drop Overlay */}
-      {isDragOver && isAuthenticated && (
+      {isDragOver && (
         <div className="absolute inset-0 bg-blue-500/10 border-2 border-dashed border-blue-500 rounded-xl flex items-center justify-center pointer-events-none">
           <div className="text-blue-600 dark:text-blue-400 font-semibold">
             Drop files here to upload
