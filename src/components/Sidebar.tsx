@@ -105,7 +105,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <LogOut className="text-gray-400 hover:text-red-500" size={14} />
               </button>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Top Section - Roles (50% height) */}
