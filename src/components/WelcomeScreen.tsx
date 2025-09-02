@@ -60,68 +60,6 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ selectedRole }) =>
         </div>
       </div>
 
-      {/* Enhanced Features Grid */}
-      <div className="max-w-6xl mx-auto mb-16">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-          🚀 Available Expertise Areas
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { 
-              title: 'Plant Operations & Maintenance', 
-              color: 'from-yellow-500 to-orange-500',
-              icon: '⚙️',
-              description: 'Machinery troubleshooting & process optimization'
-            },
-            { 
-              title: 'Project Management', 
-              color: 'from-blue-500 to-cyan-500',
-              icon: '📊',
-              description: 'EPC scheduling & resource planning'
-            },
-            { 
-              title: 'Sales & Marketing', 
-              color: 'from-green-500 to-emerald-500',
-              icon: '📈',
-              description: 'Market analysis & customer strategies'
-            },
-            { 
-              title: 'Procurement & Supply Chain', 
-              color: 'from-purple-500 to-violet-500',
-              icon: '🛒',
-              description: 'Vendor negotiations & inventory optimization'
-            },
-            { 
-              title: 'Erection & Commissioning', 
-              color: 'from-red-500 to-pink-500',
-              icon: '🔧',
-              description: 'Installation sequencing & safety compliance'
-            },
-            { 
-              title: 'Engineering & Design', 
-              color: 'from-orange-500 to-red-500',
-              icon: '⚡',
-              description: 'Process flow design & equipment selection'
-            }
-          ].map((feature, index) => (
-            <div 
-              key={index}
-              className="group p-6 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            >
-              <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center text-2xl mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                {feature.icon}
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                {feature.title}
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Call to Action */}
       <div className="max-w-2xl mx-auto">
         <div className="p-8 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl shadow-2xl text-white">

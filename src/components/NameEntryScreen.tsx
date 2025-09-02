@@ -141,20 +141,76 @@ export const NameEntryScreen: React.FC<NameEntryScreenProps> = ({ onComplete }) 
             <div className="mt-10 space-y-4">
               <h4 className="text-sm font-black text-slate-700 text-center mb-6 flex items-center justify-center gap-2">
                 <Shield className="w-4 h-4 text-green-500" />
-                🎉 You'll get instant access to:
+                🚀 Available Expertise Areas
               </h4>
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 {[
-                  { icon: '🤖', text: 'General AI Assistant', color: 'bg-purple-100 text-purple-700' },
-                  { icon: '📎', text: 'File Upload Support', color: 'bg-blue-100 text-blue-700' },
-                  { icon: '💾', text: 'Chat History & Sessions', color: 'bg-green-100 text-green-700' },
-                  { icon: '⚡', text: 'All Expert Areas', color: 'bg-yellow-100 text-yellow-700' }
+                  { 
+                    title: 'Plant Operations & Maintenance', 
+                    color: 'bg-gradient-to-br from-yellow-100 to-orange-100 text-yellow-800 border-yellow-200',
+                    icon: '⚙️',
+                    description: 'Machinery troubleshooting & process optimization'
+                  },
+                  { 
+                    title: 'Project Management', 
+                    color: 'bg-gradient-to-br from-blue-100 to-cyan-100 text-blue-800 border-blue-200',
+                    icon: '📊',
+                    description: 'EPC scheduling & resource planning'
+                  },
+                  { 
+                    title: 'Sales & Marketing', 
+                    color: 'bg-gradient-to-br from-green-100 to-emerald-100 text-green-800 border-green-200',
+                    icon: '📈',
+                    description: 'Market analysis & customer strategies'
+                  },
+                  { 
+                    title: 'Procurement & Supply Chain', 
+                    color: 'bg-gradient-to-br from-purple-100 to-violet-100 text-purple-800 border-purple-200',
+                    icon: '🛒',
+                    description: 'Vendor negotiations & inventory optimization'
+                  },
+                  { 
+                    title: 'Erection & Commissioning', 
+                    color: 'bg-gradient-to-br from-red-100 to-pink-100 text-red-800 border-red-200',
+                    icon: '🔧',
+                    description: 'Installation sequencing & safety compliance'
+                  },
+                  { 
+                    title: 'Engineering & Design', 
+                    color: 'bg-gradient-to-br from-orange-100 to-red-100 text-orange-800 border-orange-200',
+                    icon: '⚡',
+                    description: 'Process flow design & equipment selection'
+                  }
                 ].map((feature, index) => (
-                  <div key={index} className={`${feature.color} rounded-xl p-3 text-center font-bold backdrop-blur-sm border border-current/20`}>
-                    <div className="text-lg mb-1">{feature.icon}</div>
-                    <div className="text-xs">{feature.text}</div>
+                  <div key={index} className={`${feature.color} rounded-xl p-4 backdrop-blur-sm border-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="text-2xl">{feature.icon}</div>
+                      <div className="font-bold text-xs leading-tight">{feature.title}</div>
+                    </div>
+                    <div className="text-xs opacity-80 leading-relaxed">{feature.description}</div>
                   </div>
                 ))}
+              </div>
+              
+              {/* Additional Features */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h5 className="text-xs font-bold text-gray-600 text-center mb-4 flex items-center justify-center gap-2">
+                  <Sparkles className="w-3 h-3 text-blue-500" />
+                  Plus Premium Features
+                </h5>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  {[
+                    { icon: '🤖', text: 'General AI Assistant', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+                    { icon: '📎', text: 'File Upload Support', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+                    { icon: '💾', text: 'Chat History & Sessions', color: 'bg-green-50 text-green-700 border-green-200' },
+                    { icon: '🎯', text: 'Expert Consultation', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' }
+                  ].map((feature, index) => (
+                    <div key={index} className={`${feature.color} rounded-lg p-3 text-center font-bold backdrop-blur-sm border`}>
+                      <div className="text-base mb-1">{feature.icon}</div>
+                      <div className="text-xs leading-tight">{feature.text}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
