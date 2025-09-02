@@ -123,21 +123,22 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     <div className="space-y-4">
       {/* File Uploads Display */}
       {uploadedFiles.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="list" aria-label="Uploaded files">
           {uploadedFiles.map((file) => (
-            <div key={file.id} className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-xl px-3 py-2 backdrop-blur-sm">
+            <div key={file.id} className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-xl px-3 py-2 backdrop-blur-sm" role="listitem">
               {file.type.startsWith('image/') ? (
                 <Image className="text-blue-600 dark:text-blue-400" size={16} />
               ) : (
                 <FileText className="text-blue-600 dark:text-blue-400" size={16} />
               )}
-              <span className="text-sm font-medium text-blue-700 dark:text-blue-300 truncate max-w-32">
+              <span className="text-sm font-medium text-blue-700 dark:text-blue-300 truncate max-w-32 dyslexia-friendly">
                 {file.name}
               </span>
               {onRemoveFile && (
                 <button
                   onClick={() => onRemoveFile(file.id)}
-                  className="p-1 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-full transition-colors"
+                  className="p-1 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-full transition-colors focus-ring-enhanced"
+                  aria-label={`Remove file ${file.name}`}
                 >
                   <X className="text-blue-600 dark:text-blue-400" size={12} />
                 </button>
@@ -148,7 +149,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       )}
 
       {/* Enhanced Input Form */}
-      <form onSubmit={handleSubmit} className="relative">
+      <form onSubmit={handleSubmit} className="relative" role="search" aria-label="Send message to CemtrAS AI">
         <div className="flex items-end gap-4">
           <div className="flex-1 relative">
             {/* Enhanced Textarea */}
@@ -162,10 +163,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               disabled={isLoading}
-              className="w-full px-6 py-4 pr-24 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 shadow-lg transition-all duration-200 hover:shadow-xl"
+              className="w-full px-6 py-4 pr-24 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-accessible dark:text-accessible-dark placeholder-gray-500 dark:placeholder-gray-400 shadow-lg transition-all duration-200 hover:shadow-xl accessible-input dyslexia-friendly"
+              aria-label="Type your message to CemtrAS AI"
+              aria-describedby="input-help"
               rows={1}
               style={{ minHeight: '56px', maxHeight: '120px' }}
             />
+            <div id="input-help" className="sr-only">
+              Type your message and press Enter to send, or Shift+Enter for new line
+            </div>
             
             {/* Enhanced Control Buttons */}
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
@@ -184,7 +190,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isLoading}
-                    className="p-2 bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-400 hover:bg-gray-200/80 dark:hover:bg-gray-600/80 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm shadow-md hover:shadow-lg"
+                    className="p-2 bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-400 hover:bg-gray-200/80 dark:hover:bg-gray-600/80 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm shadow-md hover:shadow-lg accessible-button focus-ring-enhanced"
+                    aria-label="Upload files (images, PDFs, documents)"
                     title="Upload files"
                   >
                     <Paperclip size={16} />
@@ -198,11 +205,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                   type="button"
                   onClick={toggleVoiceInput}
                   disabled={isLoading}
-                  className={`p-2 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm shadow-md hover:shadow-lg ${
+                  className={`p-2 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm shadow-md hover:shadow-lg accessible-button focus-ring-enhanced ${
                     isListening 
                       ? 'bg-red-100/80 text-red-600 hover:bg-red-200/80 animate-pulse' 
                       : 'bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-400 hover:bg-gray-200/80 dark:hover:bg-gray-600/80'
                   }`}
+                  aria-label={isListening ? "Stop voice recording" : "Start voice input"}
                   title={isListening ? "Stop recording" : "Start voice input"}
                 >
                   {isListening ? <MicOff size={16} /> : <Mic size={16} />}
@@ -215,7 +223,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           <button
             type="submit"
             disabled={!message.trim() || isLoading}
-            className="p-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex-shrink-0 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:transform-none"
+            className="p-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex-shrink-0 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:transform-none accessible-button focus-ring-enhanced"
+            aria-label="Send message to CemtrAS AI"
             title="Send message"
           >
             <Send size={20} />
