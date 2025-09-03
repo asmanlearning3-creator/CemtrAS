@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Factory, User, ArrowRight, Sparkles, Shield, Zap } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Factory, User, ArrowRight, Sparkles, Shield, Zap, Lightbulb } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 interface NameEntryScreenProps {
@@ -10,15 +10,39 @@ export const NameEntryScreen: React.FC<NameEntryScreenProps> = ({ onComplete }) 
   const { authenticateWithName, isLoading, error, clearError } = useAuth();
   const [name, setName] = useState('');
   const [showAccessibilityMenu, setShowAccessibilityMenu] = useState(false);
+  const [isValid, setIsValid] = useState(false);
+  const [touched, setTouched] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+
+  // Smart validation with real-time feedback
+  useEffect(() => {
+    const trimmedName = name.trim();
+    const isValidName = trimmedName.length >= 2 && /^[a-zA-Z\s]+$/.test(trimmedName);
+    setIsValid(isValidName);
+    
+    // Show hint after user starts typing but name is invalid
+    if (touched && trimmedName.length > 0 && !isValidName) {
+      setShowHint(true);
+    } else {
+      setShowHint(false);
+    }
+  }, [name, touched]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched(true);
     
-    if (name.trim().length < 2) {
+    if (!isValid) {
       return;
     }
 
-    const success = await authenticateWithName(name);
+    // Smart formatting: capitalize first letter of each word
+    const formattedName = name.trim()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+
+    const success = await authenticateWithName(formattedName);
     if (success) {
       setTimeout(() => onComplete(), 500);
     }
@@ -26,8 +50,12 @@ export const NameEntryScreen: React.FC<NameEntryScreenProps> = ({ onComplete }) 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+    if (!touched) setTouched(true);
     clearError();
   };
+
+  // Smart defaults for common names
+  const quickNameOptions = ['Guest User', 'Plant Manager', 'Operations Lead'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-6 relative overflow-hidden">
@@ -92,157 +120,72 @@ export const NameEntryScreen: React.FC<NameEntryScreenProps> = ({ onComplete }) 
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Enhanced Name Input */}
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
-                <input
-                  type="text"
-                  value={name}
-                  onChange={handleInputChange}
-                  placeholder="Enter your name"
-                  className="w-full pl-14 pr-6 py-5 border-2 border-slate-300 rounded-2xl 
-                           focus:border-blue-500 focus:outline-none transition-all duration-200
-                           font-bold text-lg bg-white/80 backdrop-blur-sm shadow-lg
-                           hover:shadow-xl focus:shadow-xl"
-                  aria-label="Enter your full name"
-                  aria-describedby="name-help character-count"
-                  aria-required="true"
-                  autoComplete="name"
-                  required
-                  minLength={2}
-                  disabled={isLoading}
-                />
-              </div>
-
-              {/* Character Count */}
-              <div className="text-right" id="character-count" aria-live="polite">
-                <span id="name-help" className="sr-only">
-                  Enter at least 2 characters for your name
-                </span>
-                <span className={`text-xs font-bold ${
-                  name.length >= 2 ? 'text-green-600' : 'text-gray-400'
-                }`}>
-                  {name.length}/2 minimum characters
-                </span>
-              </div>
-
-              {/* Enhanced Submit Button */}
-              <button
-                type="submit"
-                aria-describedby="submit-help"
-                disabled={name.trim().length < 2 || isLoading}
-                className="w-full py-5 px-8 bg-gradient-to-r from-blue-600 to-indigo-700
-                         text-white font-black text-lg rounded-2xl transition-all duration-300 shadow-xl
-                         hover:from-blue-700 hover:to-indigo-800 hover:shadow-2xl hover:-translate-y-1
-                         disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
-                         flex items-center justify-center gap-4"
-              >
-                <span id="submit-help" className="sr-only">Click to access all CemtrAS AI features</span>
-                {isLoading ? (
-                  <>
-                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Getting Started...
-                  </>
-                ) : (
-                  <>
-                    <Zap size={24} />
-                    Access All Features
-                    <ArrowRight size={24} />
-                  </>
-                )}
-              </button>
-            </form>
-
-            {/* Enhanced Features List */}
-            <div className="mt-10 space-y-4">
-              <h4 className="text-sm font-black text-slate-700 text-center mb-6 flex items-center justify-center gap-2">
-                <Shield className="w-4 h-4 text-green-500" />
-                🚀 Available Expertise Areas
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" role="list">
-                {[
-                  { 
-                    title: 'Plant Operations & Maintenance', 
-                    color: 'bg-gradient-to-br from-yellow-100 to-orange-100 text-yellow-800 border-yellow-200',
-                    icon: '⚙️',
-                    description: 'Machinery troubleshooting & process optimization'
-                  },
-                  { 
-                    title: 'Project Management', 
-                    color: 'bg-gradient-to-br from-blue-100 to-cyan-100 text-blue-800 border-blue-200',
-                    icon: '📊',
-                    description: 'EPC scheduling & resource planning'
-                  },
-                  { 
-                    title: 'Sales & Marketing', 
-                    color: 'bg-gradient-to-br from-green-100 to-emerald-100 text-green-800 border-green-200',
-                    icon: '📈',
-                    description: 'Market analysis & customer strategies'
-                  },
-                  { 
-                    title: 'Procurement & Supply Chain', 
-                    color: 'bg-gradient-to-br from-purple-100 to-violet-100 text-purple-800 border-purple-200',
-                    icon: '🛒',
-                    description: 'Vendor negotiations & inventory optimization'
-                  },
-                  { 
-                    title: 'Erection & Commissioning', 
-                    color: 'bg-gradient-to-br from-red-100 to-pink-100 text-red-800 border-red-200',
-                    icon: '🔧',
-                    description: 'Installation sequencing & safety compliance'
-                  },
-                  { 
-                    title: 'Engineering & Design', 
-                    color: 'bg-gradient-to-br from-orange-100 to-red-100 text-orange-800 border-orange-200',
-                    icon: '⚡',
-                    description: 'Process flow design & equipment selection'
-                  }
-                ].map((feature, index) => (
-                  <div key={index} className={`${feature.color} rounded-xl p-4 backdrop-blur-sm border-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 accessible-button`} role="listitem" tabIndex={0}>
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="text-2xl">{feature.icon}</div>
-                      <div className="font-bold text-xs leading-tight">{feature.title}</div>
-                    </div>
-                    <div className="text-xs opacity-80 leading-relaxed dyslexia-friendly">{feature.description}</div>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Additional Features */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <h5 className="text-xs font-bold text-gray-600 text-center mb-4 flex items-center justify-center gap-2">
-                  <Sparkles className="w-3 h-3 text-blue-500" />
-                  Plus Premium Features
-                </h5>
-                <div className="grid grid-cols-2 gap-3 text-xs" role="list">
-                  {[
-                    { icon: '🤖', text: 'General AI Assistant', color: 'bg-purple-50 text-purple-700 border-purple-200' },
-                    { icon: '📎', text: 'File Upload Support', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-                    { icon: '💾', text: 'Chat History & Sessions', color: 'bg-green-50 text-green-700 border-green-200' },
-                    { icon: '🎯', text: 'Expert Consultation', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' }
-                  ].map((feature, index) => (
-                    <div key={index} className={`${feature.color} rounded-lg p-3 text-center font-bold backdrop-blur-sm border accessible-button`} role="listitem" tabIndex={0}>
-                      <div className="text-base mb-1">{feature.icon}</div>
-                      <div className="text-xs leading-tight dyslexia-friendly">{feature.text}</div>
-                    </div>
+              <div className="space-y-3">
+                <label 
+                  htmlFor="name" 
+                  className="block text-base font-semibold text-gray-800 mb-3"
+                >
+                  What should we call you?
+                </label>
+                
+                {/* Quick name options for faster onboarding */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className="text-sm text-gray-600 mr-2">Quick options:</span>
+                  {quickNameOptions.map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => {
+                        setName(option);
+                        setTouched(true);
+                      }}
+                      className="px-3 py-1 text-xs bg-blue-50 text-blue-700 rounded-full hover:bg-blue-100 transition-colors duration-200 border border-blue-200"
+                    >
+                      {option}
+                    </button>
                   ))}
                 </div>
-              </div>
-            </div>
 
-            {/* Attribution */}
-            <div className="mt-8 pt-6 border-t border-gray-200 text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 text-xs text-gray-600 dyslexia-friendly">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                <span>Made By <span className="font-bold text-blue-600">Vipul</span></span>
-              </div>
-              <div className="flex items-center justify-center gap-2 text-xs text-gray-600 dyslexia-friendly">
-                <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                <span>Idea By <span className="font-bold text-purple-600">Akanksha</span></span>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-  );
-};
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+                  <input
+                    type="text"
+                    id="name"
+                    value={name}
+                    onChange={handleInputChange}
+                    className={`w-full pl-14 pr-6 py-5 border-2 rounded-2xl text-lg transition-all duration-200 ${
+                      !touched 
+                        ? 'border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200' 
+                        : isValid 
+                          ? 'border-green-400 focus:border-green-500 focus:ring-2 focus:ring-green-200' 
+                          : 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                    } font-bold bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-xl focus:shadow-xl focus:outline-none`}
+                    placeholder="Enter your full name (e.g., John Smith)"
+                    aria-label="Enter your full name"
+                    aria-describedby={showHint ? "name-hint" : "character-count"}
+                    aria-required="true"
+                    autoComplete="name"
+                    autoFocus
+                    required
+                    minLength={2}
+                    disabled={isLoading}
+                  />
+                </div>
+                
+                {/* Progressive disclosure: Show validation hint only when needed */}
+                {showHint && (
+                  <div 
+                    id="name-hint"
+                    className="flex items-start space-x-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 animate-fadeIn"
+                    role="alert"
+                    aria-live="polite"
+                  >
+                    <Lightbulb className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                    <span>Please enter at least 2 characters using only letters and spaces</span>
+                  </div>
+                )}
+                
+                {/* Positive feedback when valid */}
+                {touched && isValid && (
+                  <div className="flex items-center space-x-2 text-sm text-green-700 animate-fadeIn">
+                    <div className="w-4 h-4 
