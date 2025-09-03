@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, X, Factory, User, Moon, Sun, Sparkles } from 'lucide-react';
+import { Menu, Factory, User, Moon, Sun, Sparkles, ChevronDown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import type { UserRole } from '../types';
@@ -15,97 +15,137 @@ export const Header: React.FC<HeaderProps> = ({ sidebarOpen, setSidebarOpen, sel
   const { isDarkMode, toggleDarkMode } = useTheme();
 
   return (
-    <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 p-6 shadow-lg flex-shrink-0" role="banner">
+    <header className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 px-4 py-3 shadow-sm flex-shrink-0" role="banner">
       <div className="flex items-center justify-between">
-        {/* Left Section - Enhanced Branding */}
-        <div className="flex items-center gap-4" role="group" aria-label="CemtrAS AI branding and navigation">
-          {/* Mobile Menu Toggle */}
+        {/* Left Section - Compact Branding */}
+        <div className="flex items-center gap-3" role="group" aria-label="CemtrAS AI branding and navigation">
+          {/* Sidebar Toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden p-3 hover:bg-gray-100/80 dark:hover:bg-gray-800/80 rounded-xl transition-all duration-200 backdrop-blur-sm accessible-button focus-ring-enhanced"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
             aria-label={sidebarOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={sidebarOpen}
           >
-            {sidebarOpen ? (
-              <X className="text-gray-700 dark:text-gray-300" size={24} />
-            ) : (
-              <Menu className="text-gray-700 dark:text-gray-300" size={24} />
-            )}
+            <Menu className="text-gray-700 dark:text-gray-300" size={20} />
           </button>
 
-          {/* Enhanced App Branding */}
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl blur-sm opacity-50"></div>
-              <div className="relative p-3 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-xl">
-                <Factory className="text-white" size={28} />
-              </div>
-              <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
-                <Sparkles className="text-white w-3 h-3" />
-              </div>
+          {/* Compact App Branding */}
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg shadow-md">
+              <Factory className="text-white" size={20} />
             </div>
-            <div>
-              <h1 className="text-2xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent dyslexia-friendly">
-                CemtrAS AI
-              </h1>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <p className="text-sm font-bold text-blue-600 dark:text-blue-400 dyslexia-friendly" aria-live="polite">
-                  {selectedRole} Expert Active
-                </p>
-              </div>
-            </div>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              CemtrAS AI
+            </h1>
           </div>
         </div>
 
-        {/* Right Section - Enhanced Controls */}
-        <div className="flex items-center gap-4" role="group" aria-label="User controls">
-          {/* Enhanced Dark Mode Toggle */}
+        {/* Center Section - Role Selector */}
+        <div className="hidden md:flex items-center">
+          <RoleDropdown selectedRole={selectedRole} onRoleChange={() => {}} />
+        </div>
+
+        {/* Right Section - Compact Controls */}
+        <div className="flex items-center gap-2" role="group" aria-label="User controls">
+          {/* Compact Dark Mode Toggle */}
           <button
             onClick={toggleDarkMode}
-            className="p-3 hover:bg-gray-100/80 dark:hover:bg-gray-800/80 rounded-xl transition-all duration-200 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 accessible-button focus-ring-enhanced"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200"
             aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           >
             {isDarkMode ? (
-              <Sun className="text-yellow-500 w-5 h-5" />
+              <Sun className="text-yellow-500 w-4 h-4" />
             ) : (
-              <Moon className="text-gray-600 w-5 h-5" />
+              <Moon className="text-gray-600 w-4 h-4" />
             )}
           </button>
 
-          {/* Enhanced User Section */}
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-green-100/80 dark:bg-green-900/30 rounded-xl border border-green-200/50 dark:border-green-800/50 backdrop-blur-sm" role="status" aria-label="User status">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-bold text-green-700 dark:text-green-400 dyslexia-friendly">
-                Online & Ready
+          {/* Compact User Section */}
+          {user ? (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80 dark:bg-gray-800/80 rounded-lg border border-gray-200/50 dark:border-gray-700/50 shadow-sm" role="group" aria-label="User profile">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:inline">
+                {user.name}
               </span>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-sm" aria-label={`${user.name}'s profile`}>
+                <User className="text-white" size={14} />
+              </div>
             </div>
-
-            {user ? (
-              <div className="flex items-center gap-3 px-4 py-2 bg-white/80 dark:bg-gray-800/80 rounded-xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg backdrop-blur-sm" role="group" aria-label="User profile">
-                <span className="text-sm font-bold text-accessible dark:text-accessible-dark hidden md:inline dyslexia-friendly">
-                  {user.name}
-                </span>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg" aria-label={`${user.name}'s profile`}>
-                  <User className="text-white" size={18} />
-                </div>
+          ) : (
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80 dark:bg-gray-800/80 rounded-lg border border-gray-200/50 dark:border-gray-700/50 shadow-sm">
+              <div className="w-8 h-8 rounded-full overflow-hidden border border-blue-500 shadow-sm">
+                <img 
+                  src="/untitled (10).jpeg"
+                  alt="User"
+                  className="w-full h-full object-cover"
+                />
               </div>
-            ) : (
-              <div className="flex items-center gap-3 px-4 py-2 bg-white/80 dark:bg-gray-800/80 rounded-xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg backdrop-blur-sm">
-                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-500 shadow-lg">
-                  <img 
-                    src="/untitled (10).jpeg"
-                    alt="User"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </header>
+  );
+};
+
+// Role Dropdown Component
+interface RoleDropdownProps {
+  selectedRole: UserRole | 'General AI';
+  onRoleChange: (role: UserRole | 'General AI') => void;
+}
+
+const RoleDropdown: React.FC<RoleDropdownProps> = ({ selectedRole, onRoleChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const roles = [
+    'CEO',
+    'Sales Head', 
+    'Marketing Manager',
+    'Operations Manager',
+    'HR Director',
+    'Finance Manager',
+    'Project Management',
+    'Engineering & Design',
+    'Procurement',
+    'General AI'
+  ];
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 rounded-lg border border-gray-200/50 dark:border-gray-700/50 shadow-sm hover:shadow-md transition-all duration-200"
+      >
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {selectedRole}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <>
+          <div 
+            className="fixed inset-0 z-10" 
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 z-20 max-h-64 overflow-y-auto">
+            {roles.map((role) => (
+              <button
+                key={role}
+                onClick={() => {
+                  onRoleChange(role as UserRole | 'General AI');
+                  setIsOpen(false);
+                }}
+                className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 first:rounded-t-xl last:rounded-b-xl ${
+                  selectedRole === role ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-300'
+                }`}
+              >
+                {role}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 };

@@ -6,7 +6,7 @@ export interface Message {
   files?: FileUpload[];
 }
 
-export type UserRole = 'Operations' | 'Project Management' | 'Sales & Marketing' | 'Procurement' | 'Erection & Commissioning' | 'Engineering & Design';
+export type UserRole = 'Operations' | 'Project Management' | 'Sales & Marketing' | 'Procurement' | 'Erection & Commissioning' | 'Engineering & Design' | 'CEO' | 'Sales Head' | 'Marketing Manager' | 'Operations Manager' | 'HR Director' | 'Finance Manager';
 
 export interface ChatState {
   messages: Message[];

@@ -113,7 +113,6 @@ function App() {
 
   const handleRoleChange = (role: UserRole | 'General AI') => {
     setChatState(prev => ({ ...prev, selectedRole: role }));
-    setSidebarOpen(false);
   };
 
   const handleLoadChat = (history: ChatHistory) => {
@@ -160,17 +159,11 @@ function App() {
 
   return (
     <div className={`h-screen flex overflow-hidden ${isDarkMode ? 'dark' : ''}`}>
-      {/* Enhanced Background Pattern */}
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-indigo-900/20">
-        <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]">
-          <div className="absolute top-20 left-20 w-64 h-64 border-2 border-blue-500 rounded-full animate-pulse"></div>
-          <div className="absolute bottom-32 right-32 w-48 h-48 border-2 border-indigo-400 rounded-lg rotate-45 animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-1/4 w-32 h-32 border-2 border-blue-300 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
-        </div>
-      </div>
+      {/* Clean Background */}
+      <div className="fixed inset-0 bg-gray-50 dark:bg-gray-900"></div>
 
       <div className="h-full w-full flex relative z-10">
-        {/* Enhanced Sidebar */}
+        {/* Sidebar */}
         <Sidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
@@ -183,8 +176,8 @@ function App() {
         />
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Enhanced Header */}
+        <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${sidebarOpen ? 'lg:ml-80' : ''}`}>
+          {/* Header */}
           <Header
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
@@ -193,7 +186,7 @@ function App() {
 
           {/* Messages Container */}
           <div className="flex-1 overflow-y-auto">
-            <div className="p-6 space-y-6 min-h-full">
+            <div className="max-w-4xl mx-auto p-4 space-y-4 min-h-full">
               {error && (
                 <ErrorMessage 
                   message={error} 
@@ -215,27 +208,25 @@ function App() {
             </div>
           </div>
 
-          {/* Enhanced Input Area */}
-          <div className="border-t border-gray-200/50 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 flex-shrink-0">
+          {/* Input Area */}
+          <div className="border-t border-gray-200/50 dark:border-gray-700/50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm p-4 flex-shrink-0">
             <ChatInput 
               onSend={handleSendMessage}
               isLoading={chatState.isLoading || !!error}
-              placeholder={`Ask about cement plant operations (${chatState.selectedRole} expertise)...`}
+              placeholder={`Message CemtrAS AI (${chatState.selectedRole})...`}
               onFileUpload={handleFileUpload}
               uploadedFiles={chatState.uploadedFiles || []}
               onRemoveFile={handleRemoveFile}
             />
             
-            {/* Attribution Footer */}
-            <div className="flex items-center justify-center mt-4 space-x-6 text-xs text-gray-500 dark:text-gray-400">
+            {/* Compact Attribution */}
+            <div className="flex items-center justify-center mt-3 space-x-4 text-xs text-gray-500 dark:text-gray-400">
               <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                <span className="font-medium">Made By <span className="text-blue-600 dark:text-blue-400 font-semibold">Vipul</span></span>
+                <span>Made By <span className="text-blue-600 dark:text-blue-400">Vipul</span></span>
               </div>
-              <div className="w-px h-4 bg-gray-300 dark:bg-gray-600"></div>
+              <span>•</span>
               <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-                <span className="font-medium">Idea By <span className="text-purple-600 dark:text-purple-400 font-semibold">Akanksha</span></span>
+                <span>Idea By <span className="text-purple-600 dark:text-purple-400">Akanksha</span></span>
               </div>
             </div>
           </div>

@@ -226,11 +226,11 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </div>
       )}
 
-      {/* Enhanced Input Form with Smart Features */}
-      <form onSubmit={handleSubmit} className="relative" role="search" aria-label="Send message to CemtrAS AI">
+          {/* ChatGPT-style Input Form */}
+      <form onSubmit={handleSubmit} className="relative max-w-4xl mx-auto" role="search" aria-label="Send message to CemtrAS AI">
         <div className="flex items-end gap-4">
           <div className="flex-1 relative">
-            {/* Smart Textarea with Enhanced UX */}
+            {/* ChatGPT-style Textarea with auto-resize */}
             <div className="relative">
               <textarea
                 ref={textareaRef}
@@ -243,21 +243,21 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 onKeyDown={handleKeyDown}
                 placeholder={placeholder}
                 disabled={isLoading}
-                className={`w-full px-6 py-4 pr-32 rounded-2xl resize-none focus:outline-none transition-all duration-200 font-medium text-base leading-relaxed ${
+                className={`w-full px-4 py-3 pr-24 rounded-xl resize-none focus:outline-none transition-all duration-200 text-base leading-relaxed border-2 ${
                   validationState === 'invalid'
-                    ? 'bg-red-50 dark:bg-red-900/20 border-2 border-red-300 dark:border-red-700 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-800'
-                    : 'bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-700/50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-                } disabled:opacity-50 disabled:cursor-not-allowed text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 shadow-lg hover:shadow-xl focus:shadow-xl`}
+                    ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-700'
+                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-400'
+                } disabled:opacity-50 disabled:cursor-not-allowed text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 shadow-sm hover:shadow-md focus:shadow-md`}
                 aria-label="Type your message to CemtrAS AI"
                 aria-describedby="input-help"
                 aria-invalid={validationState === 'invalid'}
                 rows={1}
-                style={{ minHeight: '56px', maxHeight: '120px' }}
+                style={{ minHeight: '48px', maxHeight: '200px' }}
               />
               
-              {/* Smart Character Counter */}
+              {/* Character Counter */}
               {showCharCount && (
-                <div className={`absolute bottom-2 left-4 text-xs font-medium ${
+                <div className={`absolute bottom-2 left-3 text-xs ${
                   charCount > MAX_CHARS * 0.9 
                     ? 'text-red-600 dark:text-red-400' 
                     : 'text-gray-500 dark:text-gray-400'
@@ -267,9 +267,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               )}
             </div>
             
-            {/* Enhanced Control Buttons */}
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
-              {/* Smart File Upload */}
+            {/* Control Buttons - ChatGPT style */}
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
+              {/* File Upload */}
               {onFileUpload && (
                 <>
                   <input
@@ -285,79 +285,70 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isLoading}
-                    className="p-2.5 bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-400 hover:bg-gray-200/80 dark:hover:bg-gray-600/80 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Upload files (images, PDFs, documents up to 10MB)"
                     title="Upload files"
                   >
-                    <Paperclip size={16} />
+                    <Paperclip size={14} />
                   </button>
                 </>
               )}
 
-              {/* Smart Voice Input */}
+              {/* Voice Input */}
               {hasVoiceSupport && (
                 <button
                   type="button"
                   onClick={toggleVoiceInput}
                   disabled={isLoading}
-                  className={`p-2.5 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${
+                  className={`p-2 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
                     isListening 
-                      ? 'bg-red-100/80 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200/80 dark:hover:bg-red-800/30 animate-pulse' 
-                      : 'bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-400 hover:bg-gray-200/80 dark:hover:bg-gray-600/80'
+                      ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800/30' 
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                   aria-label={isListening ? "Stop voice recording" : "Start voice input"}
                   title={isListening ? "Stop recording" : "Start voice input"}
                 >
-                  {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+                  {isListening ? <MicOff size={14} /> : <Mic size={14} />}
                 </button>
               )}
             </div>
 
-            {/* Smart Validation Feedback */}
+            {/* Validation Feedback */}
             {validationState === 'invalid' && (
-              <div className="absolute -bottom-8 left-0 flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+              <div className="absolute -bottom-6 left-0 flex items-center gap-2 text-xs text-red-600 dark:text-red-400">
                 <AlertCircle className="w-4 h-4" />
                 <span>Message too long ({charCount}/{MAX_CHARS} characters)</span>
               </div>
             )}
           </div>
           
-          {/* Enhanced Send Button with Smart States */}
+          {/* ChatGPT-style Send Button */}
           <button
             type="submit"
             disabled={!canSend}
-            className={`p-4 rounded-2xl transition-all duration-200 flex-shrink-0 shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500/50 min-w-[56px] min-h-[56px] flex items-center justify-center ${
+            className={`p-3 rounded-xl transition-all duration-200 flex-shrink-0 shadow-sm focus:outline-none min-w-[48px] min-h-[48px] flex items-center justify-center ${
               canSend
-                ? 'bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0'
+                ? 'bg-blue-600 hover:bg-blue-700 text-white hover:shadow-md'
                 : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
             }`}
             aria-label={isLoading ? "Sending message..." : "Send message to CemtrAS AI"}
             title={canSend ? "Send message" : "Enter a message to send"}
           >
             {isLoading ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : (
-              <Send size={20} />
+              <Send size={16} />
             )}
           </button>
         </div>
 
-        {/* Smart Helper Text */}
-        <div id="input-help" className="mt-3 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          <div className="flex items-center gap-4">
-            <span>Press Enter to send, Shift+Enter for new line</span>
-            {hasVoiceSupport && (
-              <span className="flex items-center gap-1">
-                <Mic className="w-3 h-3" />
-                Voice input available
-              </span>
-            )}
-          </div>
+        {/* Helper Text */}
+        <div id="input-help" className="mt-2 text-center text-xs text-gray-500 dark:text-gray-400">
+          <span>Press Enter to send, Shift+Enter for new line</span>
           {validationState === 'valid' && (
-            <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+            <span className="ml-2 text-green-600 dark:text-green-400">
               <Check className="w-3 h-3" />
-              <span>Ready to send</span>
-            </div>
+            </span>
           )}
         </div>
       </form>
